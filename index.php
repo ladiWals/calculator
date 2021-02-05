@@ -1,5 +1,6 @@
 <?php 
 // Основной блок исполнения логики
+$result = 0;
 ?>
 
 <!DOCTYPE html>
@@ -11,4 +12,14 @@
 
 <body>
 	<h1>Простейший калькулятор</h1>
+	<div class="buttons">
+		<form>
+			<input type="text" name="first" size="10">
+			<input type="text" name="second" size="10">
+			<input type="submit" value="=">
+			<span class="pseudoInput">
+				<label><?=$result?></label>
+			</span>
+		</form>
+	</div>
 </body>
