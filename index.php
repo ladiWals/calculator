@@ -2,13 +2,21 @@
 // Основной блок исполнения логики
 
 $error = false;
+$result = '';
 
 // Когда нажал на "равно"
 if($_POST['submit']) {
+	$num = '|^[\d.]+$|'; // Шаблон числа
+	$first = $_POST['first'];
+	$second = $_POST['second'];
+
 	// Проверяю, числа ли мне передали в форме
-	$num = '|^[\d.]+$|';
-	if(preg_match($num, $_POST['first']) && preg_match($num, $_POST['second'])) {
-		eval('$result=' . $_POST['first'] . $_POST['action'] . $_POST['second'] . ';');
+	if(preg_match($num, $first) && preg_match($num, $second)) {
+		if($_POST['action'] == '/' && $second == 0) {
+			$error = "На ноль делить нельзя!!!";
+		} else {
+			eval('$result=' . $first . $_POST['action'] . $second . ';');
+		}
 	} else {
 		$error = "Поля должны содержать только цифры и разделитель в виде точки!!!";
 	}
@@ -28,12 +36,14 @@ if($_POST['submit']) {
 	<h1>Простейший калькулятор</h1>
 	<div class="buttons">
 		<form action="/" method="POST">
+			<!-- Список выбора действия -->
 			<div class="radioList">
 				<ul>
-					<li><input type="radio" name="action" value="+" <?=$_POST['action'] == '+' || empty($_POST['action']) ? 'checked' : ''?>> + (сложение)</li>
-					<li><input type="radio" name="action" value="-" <?=$_POST['action'] == '-' ? 'checked' : ''?>> - (вычитание)</li>
-					<li><input type="radio" name="action" value="*" <?=$_POST['action'] == '*' ? 'checked' : ''?>> * (умножение)</li>
-					<li><input type="radio" name="action" value="/" <?=$_POST['action'] == '/' ? 'checked' : ''?>> / (деление)</li>
+					<li><input type="radio" name="action" value="+" <?=isset($_POST['action']) && $_POST['action'] == '+' 
+					|| empty($_POST['action']) ? 'checked' : ''?>> + (сложение)</li>
+					<li><input type="radio" name="action" value="-" <?=isset($_POST['action']) && $_POST['action'] == '-' ? 'checked' : ''?>> - (вычитание)</li>
+					<li><input type="radio" name="action" value="*" <?=isset($_POST['action']) && $_POST['action'] == '*' ? 'checked' : ''?>> * (умножение)</li>
+					<li><input type="radio" name="action" value="/" <?=isset($_POST['action']) && $_POST['action'] == '/' ? 'checked' : ''?>> / (деление)</li>
 				</ul>
 			</div>
 			<input type="text" name="first" size="10" value="<?=$_POST['first'] ?? ''?>">
