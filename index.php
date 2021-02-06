@@ -3,6 +3,8 @@
 
 $error = false;
 $result = '';
+$logAction = [];
+$logAction[] = [123, '+', 789, 912];
 
 if($_POST['action']) {
 	$num = '|^[\d.]+$|'; // Шаблон числа
@@ -86,5 +88,15 @@ if($_POST['action']) {
 			</table>
 			<label class="error"><?=$error ? $error : ''?></label>
 		</form>
+	</div>
+		<h1>Предыдущие вычисления</h1>
+		<div class="log">
+		<ul>
+			<?php foreach($logAction as $sample) {?>
+				<li>
+					<?=$sample[0] . ' ' . $sample[1] . ' ' . $sample[2] . ' = ' . $sample[3]?>
+				</li>
+			<?php } ?>
+		</ul>
 	</div>
 </body>
