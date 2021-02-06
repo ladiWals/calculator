@@ -1,20 +1,7 @@
 <?php 
 // Основной блок исполнения логики
 if($_POST['submit']) {
-	switch($_POST['action']) {
-		case '+':
-			$result = $_POST['first'] + $_POST['second'];
-			break;
-		case '-':
-			$result = $_POST['first'] - $_POST['second'];
-			break;
-		case '*':
-			$result = $_POST['first'] * $_POST['second'];
-			break;
-		case '/':
-			$result = $_POST['first'] / $_POST['second'];
-			break;
-	}
+	eval('$result=' . (int)$_POST['first'] . $_POST['action'] . (int)$_POST['second'] . ';');
 }
 ?>
 
