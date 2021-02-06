@@ -4,8 +4,7 @@
 $error = false;
 $result = '';
 
-// Когда нажал на "равно"
-if($_POST['submit']) {
+if($_POST['action']) {
 	$num = '|^[\d.]+$|'; // Шаблон числа
 	$first = $_POST['first'];
 	$second = $_POST['second'];
@@ -18,7 +17,7 @@ if($_POST['submit']) {
 			eval('$result=' . $first . $_POST['action'] . $second . ';');
 		}
 	} else {
-		$error = "Поля должны содержать только цифры и разделитель в виде точки!!!";
+		$error = "Вводить только цифры!!!";
 	}
 }
 
@@ -34,24 +33,57 @@ if($_POST['submit']) {
 
 <body>
 	<h1>Простейший калькулятор</h1>
-	<div class="buttons">
+	<div class="mainField">
 		<form action="/" method="POST">
-			<!-- Список выбора действия -->
-			<div class="radioList">
-				<ul>
-					<li><input type="radio" name="action" value="+" <?=isset($_POST['action']) && $_POST['action'] == '+' 
-					|| empty($_POST['action']) ? 'checked' : ''?>> + (сложение)</li>
-					<li><input type="radio" name="action" value="-" <?=isset($_POST['action']) && $_POST['action'] == '-' ? 'checked' : ''?>> - (вычитание)</li>
-					<li><input type="radio" name="action" value="*" <?=isset($_POST['action']) && $_POST['action'] == '*' ? 'checked' : ''?>> * (умножение)</li>
-					<li><input type="radio" name="action" value="/" <?=isset($_POST['action']) && $_POST['action'] == '/' ? 'checked' : ''?>> / (деление)</li>
-				</ul>
-			</div>
-			<input type="text" name="first" size="10" value="<?=$_POST['first'] ?? ''?>">
-			<label><?=$_POST['action'] ?? '_'?></label>
-			<input type="text" name="second" size="10" value="<?=$_POST['second'] ?? ''?>">
-			<input type="submit" name="submit" value="=">
-			<label class="pseudoInput"><?=$result?></label>
-			<br>
+			<table>
+				<tr>
+					<td>
+					</td>
+					<td>
+						<input type="submit" name="action" value="+" <?=isset($_POST['action']) && $_POST['action'] == '+' 
+							|| empty($_POST['action']) ? 'checked' : ''?>>
+					</td>
+				</tr>
+				<tr>
+					<td>
+					</td>
+					<td>
+						<input type="submit" name="action" value="-" <?=isset($_POST['action']) && $_POST['action'] == '-' 
+							|| empty($_POST['action']) ? 'checked' : ''?>>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="text" name="first" size="10" value="<?=$_POST['first'] ?? ''?>">
+					</td>
+					<td>
+						<input type="submit" name="action" value="*" <?=isset($_POST['action']) && $_POST['action'] == '*' 
+							|| empty($_POST['action']) ? 'checked' : ''?>>
+					</td>
+					<td>
+						<input type="text" name="second" size="10" value="<?=$_POST['second'] ?? ''?>">
+					</td>
+					<td>
+						<label class="pseudoInput"><?='=' . $result?></label>
+					</td>
+				</tr>
+				<tr>
+					<td>
+					</td>
+					<td>
+						<input type="submit" name="action" value="/" <?=isset($_POST['action']) && $_POST['action'] == '/' 
+							|| empty($_POST['action']) ? 'checked' : ''?>>
+					</td>
+				</tr>
+				<tr>
+					<td>
+					</td>
+					<td>
+						<input type="submit" name="action" value="**" <?=isset($_POST['action']) && $_POST['action'] == '**' 
+							|| empty($_POST['action']) ? 'checked' : ''?>>
+					</td>
+				</tr>
+			</table>
 			<label class="error"><?=$error ? $error : ''?></label>
 		</form>
 	</div>
