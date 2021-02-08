@@ -17,6 +17,12 @@ if($_POST['action']) {
 			$error = "На ноль делить нельзя!!!";
 		} else {
 			eval('$result=' . $first . $_POST['action'] . $second . ';');
+
+			// Пишу в лог
+			$logRow = $first . ' ' . $_POST['action'] . ' ' . $second . ' ' .$result . '\r';
+			$fileDesc = fopen("history.txt", 'a');
+			fwrite($fileDesc, $logRow);
+			fclose($fileDesc);
 		}
 	} else {
 		$error = "Вводить только цифры!!!";
