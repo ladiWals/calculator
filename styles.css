@@ -27,7 +27,7 @@ body {
 .log {
 	margin-left: 30%;
 	margin-right: 30%;
-	font-size: 30px;
+	font-size: 25px;
 }
 
 .log li {
@@ -35,6 +35,10 @@ body {
 	border-radius: 10px;
 	padding: 5px;
 	margin: 5px;
+}
+
+.log h2 {
+	font-size: 26px;
 }
 
 input {

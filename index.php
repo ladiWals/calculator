@@ -30,6 +30,12 @@ if($_POST['action']) {
 	}
 }
 
+if($_POST['clearLog']) {
+	unset($_COOKIE['lastRow']);
+	$refreshLog = fopen('history.txt', 'w+');
+	fclose($refreshLog);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -96,8 +102,8 @@ if($_POST['action']) {
 			<label class="error"><?=$error ? $error : ''?></label>
 		</form>
 	</div>
-	<h1>Предыдущие вычисления</h1>
 	<div class="log">
+		<h2>Предыдущие вычисления</h2>
 		<ul>
 			<?php
 			$myFile = fopen('history.txt', 'r');
@@ -109,5 +115,8 @@ if($_POST['action']) {
 			}
 			fclose($myFile);?>
 		</ul>
+		<form action="/" method="POST">
+			<input type="submit" name="clearLog" value="Очистить историю">
+		</form>
 	</div>
 </body>
