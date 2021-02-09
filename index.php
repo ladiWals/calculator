@@ -4,7 +4,6 @@
 $error = false;
 $result = '';
 $logAction = [];
-$logAction[] = [123, '+', 789, 912];
 
 if($_POST['action']) {
 	$num = '|^[\d.]+$|'; // Шаблон числа
@@ -19,7 +18,7 @@ if($_POST['action']) {
 			eval('$result=' . $first . $_POST['action'] . $second . ';');
 
 			// Пишу в лог
-			$logRow = $first . ' ' . $_POST['action'] . ' ' . $second . ' ' .$result . '\r';
+			$logRow = $first . ' ' . $_POST['action'] . ' ' . $second . ' = ' .$result . PHP_EOL;
 			$fileDesc = fopen("history.txt", 'a');
 			fwrite($fileDesc, $logRow);
 			fclose($fileDesc);
@@ -95,14 +94,18 @@ if($_POST['action']) {
 			<label class="error"><?=$error ? $error : ''?></label>
 		</form>
 	</div>
-		<h1>Предыдущие вычисления</h1>
-		<div class="log">
+	<h1>Предыдущие вычисления</h1>
+	<div class="log">
 		<ul>
-			<?php foreach($logAction as $sample) {?>
+			<?php
+			$myFile = fopen('history.txt', 'r');
+			while(($row = fgets($myFile)) !== false) { ?>
 				<li>
-					<?=$sample[0] . ' ' . $sample[1] . ' ' . $sample[2] . ' = ' . $sample[3]?>
+					<?=$row?>
 				</li>
-			<?php } ?>
+			<?php
+			}
+			fclose($myFile);?>
 		</ul>
 	</div>
 </body>
