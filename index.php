@@ -3,7 +3,6 @@
 
 $error = false;
 $result = '';
-$logAction = [];
 
 if($_POST['action']) {
 	$num = '|^[\d.]+$|'; // Шаблон числа
@@ -18,10 +17,13 @@ if($_POST['action']) {
 			eval('$result=' . $first . $_POST['action'] . $second . ';');
 
 			// Пишу в лог
-			$logRow = $first . ' ' . $_POST['action'] . ' ' . $second . ' = ' .$result . PHP_EOL;
-			$fileDesc = fopen("history.txt", 'a');
-			fwrite($fileDesc, $logRow);
-			fclose($fileDesc);
+			$logRow = $first . ' ' . $_POST['action'] . ' ' . $second . ' = ' . $result . PHP_EOL;
+			if($logRow != $_COOKIE['lastRow']) {
+				$fileDesc = fopen("history.txt", 'a');
+				fwrite($fileDesc, $logRow);
+				fclose($fileDesc);
+				setcookie('lastRow', $logRow);
+			}
 		}
 	} else {
 		$error = "Вводить только цифры!!!";
