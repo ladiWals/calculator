@@ -4,25 +4,43 @@
 $error = false;
 $result = '';
 
+// SQL-запросы
+$testLogQuery = "SELECT * FROM calculator_logs";
+// $newLogQuery = "INSERT INTO calculator_logs (first) VALUES ('1')";
+$readLogQuery = "SELECT first, second, action, result FROM calculator_logs";
+$clearLogQuery = "DELETE FROM calculator_logs";
+
+require_once('connection.php');
+
+// Обработка полученной формы
 if($_POST['action']) {
 	$num = '|^[\d.]+$|'; // Шаблон числа
 	$first = $_POST['first'];
 	$second = $_POST['second'];
+	$action = $_POST['action'];
 
 	// Проверяю, числа ли мне передали в форме
 	if(preg_match($num, $first) && preg_match($num, $second)) {
-		if($_POST['action'] == '/' && $second == 0) {
+		if($_POST['action'] == '/' && $second == 0) { // Ошибка если делю на ноль
 			$error = "На ноль делить нельзя!!!";
-		} else {
+		} else { // Если всё в порядке
+
+			// Вычисление результата
 			eval('$result=' . $first . $_POST['action'] . $second . ';');
 
-			// Пишу в лог
-			$logRow = $first . ' ' . $_POST['action'] . ' ' . $second . ' = ' . $result . PHP_EOL;
-			if($logRow != $_COOKIE['lastRow']) {
-				$fileDesc = fopen("history.txt", 'a');
-				fwrite($fileDesc, $logRow);
-				fclose($fileDesc);
-				setcookie('lastRow', $logRow);
+			$newAction = $first . $action . $second . $result;
+
+			if($_COOKIE['lastRow'] != $newAction) {
+
+				// Внесение нового лога в БД
+				$link = mysqli_connect($host, $user, $password, $database) or die("Ошибка " . mysqli_error($link));
+				$res = mysqli_query($link, 
+					"INSERT INTO calculator_logs (first, second, action, result) VALUES ('$first', '$second', '$action', '$result')") 
+				or die("Ошибка " . mysqli_error($link));
+				mysqli_close($link);
+
+				// Кукаю последнее действие
+				setcookie('lastRow', $newAction);
 			}
 		}
 	} else {
@@ -32,8 +50,9 @@ if($_POST['action']) {
 
 if($_POST['clearLog']) {
 	unset($_COOKIE['lastRow']);
-	$refreshLog = fopen('history.txt', 'w+');
-	fclose($refreshLog);
+	$link = mysqli_connect($host, $user, $password, $database) or die("Ошибка " . mysqli_error($link));
+	$res = mysqli_query($link, $clearLogQuery) or die("Ошибка " . mysqli_error($link));
+	mysqli_close($link);
 }
 
 ?>
@@ -106,14 +125,26 @@ if($_POST['clearLog']) {
 		<h2>Предыдущие вычисления</h2>
 		<ul>
 			<?php
-			$myFile = fopen('history.txt', 'r');
-			while(($row = fgets($myFile)) !== false) { ?>
+
+			// Подключение к БД
+			$link = mysqli_connect($host, $user, $password, $database) or die("Ошибка " . mysqli_error($link));
+
+			// Получаю все логи из таблицы БД
+			$res = mysqli_query($link, $readLogQuery) or die("Ошибка " . mysqli_error($link));
+
+			// Извлечение данных запроса
+			for ($data = []; $row = mysqli_fetch_assoc($res); $data[] = $row);
+
+			foreach($data as $logRow) { ?>
 				<li>
-					<?=$row?>
+					<?=$logRow['first'] . ' ' . $logRow['action'] . ' ' . $logRow['second'] . ' = ' . $logRow['result']?>
 				</li>
 			<?php
 			}
-			fclose($myFile);?>
+
+			// закрываем подключение
+			mysqli_close($link);
+			?>
 		</ul>
 		<form action="/" method="POST">
 			<input type="submit" name="clearLog" value="Очистить историю">
