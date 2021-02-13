@@ -4,13 +4,8 @@
 $error = false;
 $result = '';
 
-// SQL-запросы
-$testLogQuery = "SELECT * FROM calculator_logs";
-// $newLogQuery = "INSERT INTO calculator_logs (first) VALUES ('1')";
-$readLogQuery = "SELECT first, second, action, result FROM calculator_logs";
-$clearLogQuery = "DELETE FROM calculator_logs";
-
 require_once('connection.php');
+$link = mysqli_connect($host, $user, $password, $database) or die("Ошибка " . mysqli_error($link));
 
 // Обработка полученной формы
 if($_POST['action']) {
@@ -33,11 +28,9 @@ if($_POST['action']) {
 			if($_COOKIE['lastRow'] != $newAction) {
 
 				// Внесение нового лога в БД
-				$link = mysqli_connect($host, $user, $password, $database) or die("Ошибка " . mysqli_error($link));
 				$res = mysqli_query($link, 
 					"INSERT INTO calculator_logs (first, second, action, result) VALUES ('$first', '$second', '$action', '$result')") 
 				or die("Ошибка " . mysqli_error($link));
-				mysqli_close($link);
 
 				// Кукаю последнее действие
 				setcookie('lastRow', $newAction);
@@ -50,9 +43,7 @@ if($_POST['action']) {
 
 if($_POST['clearLog']) {
 	unset($_COOKIE['lastRow']);
-	$link = mysqli_connect($host, $user, $password, $database) or die("Ошибка " . mysqli_error($link));
-	$res = mysqli_query($link, $clearLogQuery) or die("Ошибка " . mysqli_error($link));
-	mysqli_close($link);
+	$res = mysqli_query($link, "DELETE FROM calculator_logs") or die("Ошибка " . mysqli_error($link));
 }
 
 ?>
@@ -126,11 +117,8 @@ if($_POST['clearLog']) {
 		<ul>
 			<?php
 
-			// Подключение к БД
-			$link = mysqli_connect($host, $user, $password, $database) or die("Ошибка " . mysqli_error($link));
-
 			// Получаю все логи из таблицы БД
-			$res = mysqli_query($link, $readLogQuery) or die("Ошибка " . mysqli_error($link));
+			$res = mysqli_query($link, $readLogQuery = "SELECT first, second, action, result FROM calculator_logs") or die("Ошибка " . mysqli_error($link));
 
 			// Извлечение данных запроса
 			for ($data = []; $row = mysqli_fetch_assoc($res); $data[] = $row);
